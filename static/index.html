@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="FoodTruckService.App"
+      ng-controller="FoodTruckServiceAppController">
+<head>
+
+    <base href="/"/>
+    <title>Food Truck Service</title>
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+
+<body>
+<div ui-view="main" id="page" class="page"></div>
+<div class="container">
+    <div class="row">
+        <div><h1>Food Truck Service</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+        <form class="form-horizontal" ng-submit="search()">
+            <div class="form-group">
+                <label for="input-latitude" class="col-sm-4 control-label">Latitude</label>
+                <div class="col-xs-4">
+                    <input class="form-control" id="input-latitude" placeholder="Latitude" ng-model="latitude_search">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input-longitude" class="col-sm-4 control-label">Longitude</label>
+                <div class="col-xs-4">
+                    <input class="form-control" id="input-longitude" placeholder="Longitude"
+                           ng-model="longitude_search">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="distance" class="col-sm-4 control-label">Distance in meters</label>
+                <div class="col-xs-4">
+                    <input class="form-control" id="distance" placeholder=1000" ng-model="distance_search">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="food-type" class="col-sm-4 control-label">Food Type</label>
+                <div class="col-xs-4">
+                    <input class="form-control" id="food-type" placeholder="etc. Sandwich" ng-model="foodtype_search">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-4">
+                    <input type="submit" id="submit" value="Find Foodtrucks"/>
+                </div>
+            </div>
+        </form>
+    </div>
+        <div class="col-sm-6">
+            <h4>Help</h4>
+            <span>
+                If you want to find food trucks near a specific location you have the following options
+            </span>
+            <ul>
+                <li>You can specifiy a specfic location by filling out lat and lng, or you can use the map browse to the location</li>
+                <li>By changing the distance you can decide how far from the location you want to search </li>
+                <li>If you like certain kind of food you can filter your search by entering etc. Sandwich</li>
+            </ul>
+            <span>
+                Everytime you change parameters and want fresh data you have to click the Find Food Truck button
+            </span> <br/>
+            <span>
+                By clicking on the markers you will get information about the food truck
+            </span>
+
+            </div>
+        </div>
+    <div class="row">
+        <div class="map-container">
+            <ng-map default-style="false"
+                    map-initialized="mapInitialized(map)"
+                    class="gov-map"
+                    id="foodtruck-map"
+                    center="[37.786904919457,-122.390920262962]"
+                    on-center-changed="centerChanged()"
+                    zoom="15" style="display: block;height: 900px;">
+                <marker icon="{{!center_icon}}" position="{{!map_center}}"></marker>
+                <marker id="{{!foodtruck.id}}"
+                        ng-repeat="foodtruck in foodtrucks"
+                        position="{{!foodtruck.location.latitude}}, {{!foodtruck.location.longitude}}"
+                        title="{{!foodtruck.name}}"
+                        on-click="showFoodTruckDetail(foodtruck)"></marker>
+
+                <info-window id="foodtruck-infowindow">
+                    <div ng-non-bindable="">
+                      <h5>Name</h5> {{!selected_foodtruck.name}}<br/>
+                      <h5>Food Types</h5> {{!selected_foodtruck.food_items}}<br/>
+                      <h5>Location Description</h5> {{!selected_foodtruck.location_description}}<br/>
+                      <h5>Opening Hours</h5> {{!selected_foodtruck.opening_hours}}<br/>
+                    </div>
+                  </info-window>
+            </ng-map>
+        </div>
+    </div>
+</div>
+
+<script src="https://maps.google.com/maps/api/js?key=AIzaSyBMb9AB8Hj_6JxaE8AQtBTm6aWpo6Ujlkk"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+<script type="text/javascript"
+        src="https://rawgit.com/allenhwkim/angularjs-google-maps/master/build/scripts/ng-map.min.js"></script>
+
+<!-- Application Scripts -->
+<script src="static/js/foodtruckservice.js"></script>
+
+</body>
+</html>

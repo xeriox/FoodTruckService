@@ -1,0 +1,25 @@
+defaultTasks 'run'
+
+def service = "foodtruckservice"
+def wdir = fileTree(dir: '.')
+
+task test (type: Exec){
+    commandLine 'python', '-m', 'unittest', 'discover'
+}
+
+task stopcontainer(type: Exec) {
+    ignoreExitValue true
+    commandLine 'docker', 'kill', service
+}
+
+task removecontainer(type: Exec, dependsOn: stopcontainer) {
+    ignoreExitValue true
+    commandLine 'docker', 'rm', service
+}
+task makedocker(type: Exec) {
+    commandLine 'docker', 'build', '-t', service, '.'
+}
+
+task run(type: Exec, dependsOn: [test, stopcontainer, removecontainer, makedocker]) {
+    commandLine 'docker', 'run', '-d', '-p','80:80', '--name', service, '-v', wdir.getDir().getPath() + ':/usr/src/app', '--env-file', 'env.file', service
+}
